@@ -12,8 +12,14 @@ import { useTranslation } from "react-i18next";
 
 const Survey = () => {
   const { t } = useTranslation(); // Translation hook
-  const { answers, setAnswer, calculateScores, setShowResult, getSurveyData } =
-    useSurveyStore();
+  const {
+    answers,
+    setAnswer,
+    calculateScores,
+    setShowResult,
+    getSurveyData,
+    setPhone,
+  } = useSurveyStore();
   const navigate = useNavigate();
   const { userInfo } = useUserStore();
 
@@ -33,14 +39,19 @@ const Survey = () => {
     calculateScores();
     setShowResult(true);
 
+    const payload = {
+      ...getSurveyData(),
+      phone: userInfo.phone, // make sure phone is added
+    };
+
     try {
-      await mutation.mutateAsync(getSurveyData());
+      await mutation.mutateAsync(payload);
       navigate("/report");
     } catch (error) {
       setValidationError(t("Submission failed. Please try again."));
     }
 
-    console.log("Survey Data:", getSurveyData());
+    console.log("Survey Data:", payload);
   };
 
   return (
